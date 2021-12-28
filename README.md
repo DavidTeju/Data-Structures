@@ -1,3 +1,25 @@
 # Data-Structures
 Implementing Java's data structures one at a time (without peeking at the Java library).<br>
 Why? Cause it's fun, that's why!
+
+<h2 align="center">Linked List</h2>
+
+| **Method**  | **Parameters**                                          | **Returns**                                                                                            | **What it does**                                                                             |
+|-------------|---------------------------------------------------------|--------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------|
+| constructor | _firstObject_ - first object to add to list             | void                                                                                                   | contructs a list and adds firstObject                                                        |
+| constructor | N/A                                                     | void                                                                                                   | contructs an empty list                                                                      |
+| add         | _content_ - object to add                               | _boolean_ indicating if content was successfully added                                                 | adds content to list                                                                         |
+| addAll      | _collection_ - Collection containing contents to add    | _boolean_ indicating if content was successfully added                                                 | adds all the members of collection to our list                                               |
+| remove      | _objToRemove_ - the object to be removed                | _boolean_ indicating if objToRemove was a member of the list and was removed                           | finds a member of the list such that objToRemove.equals(member) and removes it from the list |
+| remove      | _index_ - index of object to be removed                 | _Object_ that was removed                                                                              | removes the member at index index                                                            |
+| removeAll   | _collection_ - Collection containing contents to remove | _boolean_ indicating if any member of collection was a member of the list and was successfully removed | removes all the members of collection from the list                                          |
+| clear       | N/A                                                     | void                                                                                                   | clears the list                                                                              |
+| size        | N/A                                                     | _int_ indicating the size of the list                                                                  | gets the size of the list                                                                    |
+| isEmpty     | N/A                                                     | _boolean_ indicating if the list is empty                                                              | checks if the list is empty                                                                  |
+| toArray     | N/A                                                     | _Object[]_ containing all members of the list in order                                                 | converts the list to an array                                                                |
+| contains    | _objToFind_                                             | _boolean_ indicating if the list contains objToFind                                                    | checks if the list contains objToFind                                                        |
+| get         | _index_ - index of object to find                       | _Object_ at index index                                                                                | gets the object at index                                                                     |
+| toString    | N/A                                                     | _String_ representation of the list                                                                    | converts the list to a string                                                                |
+| reverse     | N/A                                                     | _LinkedList_ that is a reversed form of the list                                                       | returns a reverse form of the list                                                           |
+| reverseThis | N/A                                                     | void                                                                                                   | converts the list to its reversed form                                                       |
+
