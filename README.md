@@ -1,2 +1,3 @@
 # Data-Structures
-Implementing Java's data structures one at a time (without peeking at the Java library). Why? Cause it's fun, that's why!
+Implementing Java's data structures one at a time (without peeking at the Java library).<br>
+Why? Cause it's fun, that's why!
