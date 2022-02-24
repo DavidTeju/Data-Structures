@@ -195,11 +195,11 @@ public class LinkedList<T> implements List<T>, Iterable<T> {
 	public boolean equals(@NotNull Object toEqual) {
 		var listToEqual = (List<T>) toEqual;
 		
-		if (size == listToEqual.size())
-			
-			for (int i = 0; i < listToEqual.size(); i++)
-				if (!get(i).equals(listToEqual.get(i)))
-					return false;
+		if (size != listToEqual.size()) return false;
+		
+		for (int i = 0; i < listToEqual.size(); i++)
+			if (!get(i).equals(listToEqual.get(i)))
+				return false;
 		
 		return true;
 	}
