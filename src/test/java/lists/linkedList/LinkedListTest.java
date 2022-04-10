@@ -1,5 +1,6 @@
 package lists.linkedList;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -11,22 +12,38 @@ import static org.junit.jupiter.api.Assertions.*;
 class LinkedListTest {
 	
 	@Test
+	@DisplayName("New Lists should be empty")
 	void new_list_should_be_empty() {
 		final var sut = new LinkedList<>();
 		assertTrue(sut.isEmpty());
 	}
 	
 	@Test
-	void querying_new_list_should_throw_index_out_of_bounds_exception() {
+	@DisplayName("LinkedList.get(n) for empty list should throw index out of bounds exception")
+	void queryingNewList() {
 		final var sut = new LinkedList<>();
 		assertThrows(IndexOutOfBoundsException.class, () -> sut.get(0));
 		assertThrows(IndexOutOfBoundsException.class, () -> sut.get(1));
 	}
 	
 	@Test
-	void passing_parameter_in_constructor_should_add_that_as_first_node() {
+	@DisplayName("Passing parameter in List constructor should create list with parameter as first member")
+	void passingMemberInConstructor() {
 		final var sut = new LinkedList<>("David");
 		assertEquals("David", sut.get(0));
+	}
+	
+	@Test
+	void passing_collection_in_constructor_should_initialize_list_with_all_members() {
+		var arrayInQuestion = new ArrayList<String>();
+		for (int i = 0; i < 10; i++)
+			arrayInQuestion.add("member" + i);
+		
+		final var sut = new LinkedList<>(arrayInQuestion);
+		assertEquals(arrayInQuestion, sut);
+		
+		for(int i = 0; i < 10; i++)
+			assertEquals(arrayInQuestion.get(i), sut.get(i));
 	}
 	
 	@Test
@@ -387,6 +404,6 @@ class LinkedListTest {
 		sut.add("David");
 		sut.add("Sarah");
 		sut.add("Johnson");
-		assertEquals("[David -> Sarah -> Johnson]", sut.toString());
+		assertEquals("[David, Sarah, Johnson]", sut.toString());
 	}
 }

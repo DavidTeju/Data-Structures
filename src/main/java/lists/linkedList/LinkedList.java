@@ -8,6 +8,7 @@ import java.util.*;
 //Helper loop: for (Node current = firstNode; current!=null; current = current.next, i++)
 public class LinkedList<T> implements List<T>, Iterable<T> {
 	private Node firstNode;
+	private Node endNode;
 	private int size = 0;
 	
 	//done
@@ -25,7 +26,7 @@ public class LinkedList<T> implements List<T>, Iterable<T> {
 	}
 	
 	//returns an entry set with key firstNode and value lastNode of a List that is to be used in an incomplete manner
-	private Map.Entry<Node, Node> getNodeStrand(Collection<? extends T> collection) {
+	private Map.Entry<Node, Node> getNodeStrand(@NotNull Collection<? extends T> collection) {
 		Node fakeFirst = new Node(null);
 		//use a fake first as a holder to which you attach everything in the collection to
 		Node holder = fakeFirst;
@@ -40,13 +41,6 @@ public class LinkedList<T> implements List<T>, Iterable<T> {
 				.stream()
 				.toList()
 				.get(0);
-	}
-	
-	private Node getListEnd() {
-		var tempEnd = firstNode;
-		while (tempEnd.next != null)
-			tempEnd = tempEnd.next;
-		return tempEnd;
 	}
 	
 	private Node getNodeAt(int index) {
@@ -65,11 +59,13 @@ public class LinkedList<T> implements List<T>, Iterable<T> {
 	
 	//done
 	public boolean add(@NotNull T toAdd) {
-		if (firstNode == null)
+		if (firstNode == null) {
 			firstNode = new Node(toAdd);
-		else
-			getListEnd().next = new Node(toAdd);
-		
+			endNode = firstNode;
+		} else {
+			endNode.next = new Node(toAdd);
+			endNode = endNode.next;
+		}
 		size++;
 		return true;
 	}
@@ -80,10 +76,12 @@ public class LinkedList<T> implements List<T>, Iterable<T> {
 		
 		var subListHead = getNodeStrand(collection).getKey();
 		
-		if (firstNode == null) firstNode = subListHead;
-		else {
-			var listEnd = getListEnd();
-			listEnd.next = subListHead;
+		if (firstNode == null) {
+			firstNode = subListHead;
+			endNode = firstNode;
+		} else {
+			endNode.next = subListHead;
+			endNode = endNode.next;
 		}
 		
 		size += collection.size();
@@ -91,24 +89,36 @@ public class LinkedList<T> implements List<T>, Iterable<T> {
 	}
 	
 	@Override
-	//done
 	public boolean addAll(int index, @NotNull Collection<? extends T> collectionToAdd) {
-		Node atIndex = getNodeAt(index);
+		if (index < 0 || index > size()) throw new IndexOutOfBoundsException();
+		//only indices from 0 to last index + 1; which is size
 		
-		var nextFromIndex = atIndex.next;
+		if (isEmpty()) {
+			addAll(collectionToAdd);
+			return true;
+		}
 		
-		var endsOfTempList = getNodeStrand(collectionToAdd);
-		var headOfTempList = endsOfTempList.getKey();
-		var lastOfTempList = endsOfTempList.getValue();
+		Node beforeNodeAtIndex = getNodeAt(index - 1);
+		Node nodeAtIndex = null;
+		boolean elementExistsAtIndex = index != size;
+		if (elementExistsAtIndex)
+			nodeAtIndex = beforeNodeAtIndex.next;
 		
-		atIndex.next = headOfTempList;
-		lastOfTempList.next = nextFromIndex;
+		Map.Entry<Node, Node> endsOfTempList = getNodeStrand(collectionToAdd);
+		Node headOfTempList = endsOfTempList.getKey();
+		Node lastOfTempList = endsOfTempList.getValue();
+		
+		beforeNodeAtIndex.next = headOfTempList;
+		if (elementExistsAtIndex)
+			lastOfTempList.next = nodeAtIndex;
+		else
+			endNode = lastOfTempList;
+		
 		size += collectionToAdd.size();
 		
 		return true;
 	}
 	
-	//done
 	public boolean remove(Object objToRemove) {
 		if (firstNode == null) return false;
 		if (objToRemove == null) throw new NullPointerException();
@@ -131,7 +141,6 @@ public class LinkedList<T> implements List<T>, Iterable<T> {
 		return false;
 	}
 	
-	//done
 	public T remove(int index) {
 		T objToRemove;
 		if (index == 0) {
@@ -147,7 +156,6 @@ public class LinkedList<T> implements List<T>, Iterable<T> {
 		return objToRemove;
 	}
 	
-	//done
 	public boolean removeAll(@NotNull Collection<?> collection) {
 		boolean removed = false;
 		for (var each : collection)
@@ -157,7 +165,6 @@ public class LinkedList<T> implements List<T>, Iterable<T> {
 		return removed;
 	}
 	
-	//done
 	@Override
 	public boolean retainAll(@NotNull Collection<?> c) {
 		boolean removed = false;
@@ -168,30 +175,26 @@ public class LinkedList<T> implements List<T>, Iterable<T> {
 		return removed;
 	}
 	
-	//done
 	public boolean containsAll(@NotNull Collection<?> collection) {
 		for (Object element : collection)
 			if (!this.contains(element)) return false;
 		return true;
 	}
 	
-	//done
 	public void clear() {
 		firstNode = null;
 	}
 	
-	//done
 	public int size() {
 		return size;
 	}
 	
-	//done
 	public boolean isEmpty() {
 		return firstNode == null;
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
+	@SuppressWarnings("unchecked")
 	public boolean equals(@NotNull Object toEqual) {
 		var listToEqual = (List<T>) toEqual;
 		
@@ -204,7 +207,6 @@ public class LinkedList<T> implements List<T>, Iterable<T> {
 		return true;
 	}
 	
-	//done
 	@NotNull
 	@Override
 	@SuppressWarnings("unchecked")
@@ -224,7 +226,6 @@ public class LinkedList<T> implements List<T>, Iterable<T> {
 		return arrayToLoad;
 	}
 	
-	//done
 	public boolean contains(Object objToFind) {
 		for (Node current = firstNode; current != null; current = current.next)
 			if (current.content.equals(objToFind)) return true;
@@ -233,14 +234,12 @@ public class LinkedList<T> implements List<T>, Iterable<T> {
 	
 	@NotNull
 	@Override
-	//done
 	public Iterator<T> iterator() {
 		return new LocalIterator();
 	}
 	
 	@NotNull
 	@Override
-	//done
 	public Object @NotNull [] toArray() {
 		var arrayToReturn = new Object[this.size()];
 		
@@ -253,7 +252,6 @@ public class LinkedList<T> implements List<T>, Iterable<T> {
 		return arrayToReturn;
 	}
 	
-	//done
 	public int indexOf(Object objToFind) {
 		int i = 0;
 		for (T each : this)
@@ -262,7 +260,6 @@ public class LinkedList<T> implements List<T>, Iterable<T> {
 		return -1;
 	}
 	
-	//done
 	public int lastIndexOf(Object objToFind) {
 		int lastIndex = -1;
 		int i = 0;
@@ -288,7 +285,6 @@ public class LinkedList<T> implements List<T>, Iterable<T> {
 		return new LocalListIterator(index);
 	}
 	
-	//done
 	@NotNull
 	@Override
 	public List<T> subList(int fromIndex, int toIndex) {
@@ -307,31 +303,12 @@ public class LinkedList<T> implements List<T>, Iterable<T> {
 		return list;
 	}
 	
-	//done
 	public T get(int index) {
 		if (index >= size()) throw new IndexOutOfBoundsException();
 		
 		return getNodeAt(index).content;
 	}
 	
-	/**
-	 * Replaces the element at the specified position in this list with the
-	 * specified element (optional operation).
-	 *
-	 * @param index   index of the element to replace
-	 * @param element element to be stored at the specified position
-	 * @return the element previously at the specified position
-	 * @throws UnsupportedOperationException if the {@code set} operation
-	 *                                       is not supported by this list
-	 * @throws ClassCastException            if the class of the specified element
-	 *                                       prevents it from being added to this list
-	 * @throws NullPointerException          if the specified element is null and
-	 *                                       this list does not permit null elements
-	 * @throws IllegalArgumentException      if some property of the specified
-	 *                                       element prevents it from being added to this list
-	 * @throws IndexOutOfBoundsException     if the index is out of range
-	 *                                       ({@code index < 0 || index >= size()})
-	 */
 	@Override
 	public T set(int index, T element) {
 		if (index >= size()) throw new IndexOutOfBoundsException();
@@ -375,7 +352,7 @@ public class LinkedList<T> implements List<T>, Iterable<T> {
 		for (Node current = firstNode.next;
 		     current != null;
 		     current = current.next)
-			internal.append(" -> ").append(current);
+			internal.append(", ").append(current);
 		
 		return String.format("[%s]", internal);
 	}
@@ -406,22 +383,24 @@ public class LinkedList<T> implements List<T>, Iterable<T> {
 	}
 	
 	private class LocalIterator implements Iterator<T> {
-		Node current = null;
+		Node current = isEmpty() ? null : firstNode;
 		
 		@Override
 		//if current is null then we have not started iteration. If current's next is null then we are at the end of the iteration
 		public boolean hasNext() {
-			return current == null || current.next != null;
+			if (isEmpty()) return false;
+			return current != null;
 		}
 		
 		@Override
 		public T next() {
 			if (!hasNext()) throw new NoSuchElementException();
 			
-			if (current == null) current = firstNode;
-			else current = current.next;
+//			if (current == null) current = firstNode;
+			var toReturn = current;
+			current = current.next;
 			
-			return current.content;
+			return toReturn.content;
 		}
 	}
 	
